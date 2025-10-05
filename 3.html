@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>高级认知功能训练</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        :root {
+            --glow-color: #4ecdc4;
+            --primary-accent: #879aff;
+            --danger-color: #e74c3c;
+            --warning-color: #f1c40f;
+            --bg-dark-alpha: rgba(0,0,0,0.1);
+            --bg-darker-alpha: rgba(0,0,0,0.2);
+            --border-alpha: rgba(255,255,255,0.1);
+            --text-primary: white;
+            --text-secondary: rgba(255,255,255,0.7);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: hidden;
+            color: var(--text-primary);
+        }
+
+        @keyframes gradientShift { 0%, 100% { background-position: 0% 50%; } 25% { background-position: 100% 50%; } 50% { background-position: 100% 100%; } 75% { background-position: 0% 100%; } }
+
+        .floating-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .particle { position: absolute; width: 6px; height: 6px; background: rgba(255, 255, 255, 0.8); border-radius: 50%; animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; } 50% { transform: translateY(-20px) rotate(180deg); opacity: 0.5; } }
+
+        .game-container {
+            background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(20px); border-radius: 25px; padding: 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2), inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+            max-width: 900px; width: 100%; border: 2px solid var(--border-alpha); position: relative; z-index: 2;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        .game-container::before {
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd);
+            border-radius: 27px; z-index: -1; animation: borderGlow 3s ease-in-out infinite alternate;
+        }
+        @keyframes borderGlow { 0% { opacity: 0.5; transform: scale(1); } 100% { opacity: 1; transform: scale(1.02); } }
+        
+        .header { text-align: center; margin-bottom: 25px; }
+        .title {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1); background-clip: text; -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; font-size: 2.5rem; font-weight: 900; margin-bottom: 10px;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5); animation: titlePulse 2s ease-in-out infinite alternate;
+        }
+        @keyframes titlePulse { 0% { transform: scale(1); } 100% { transform: scale(1.05); } }
+        .header p { font-size: 1.1rem; opacity: 0.9; text-shadow: 1px 1px 3px rgba(0,0,0,0.3); }
+
+        .controls {
+            padding: 20px; border-radius: 15px; margin-bottom: 20px; display: flex; flex-wrap: wrap; gap: 15px;
+            align-items: center; justify-content: center; background: var(--bg-dark-alpha); border: 1px solid var(--border-alpha); width: 100%;
+        }
+        .control-group { display: flex; align-items: center; gap: 10px; font-weight: bold; }
+
+        select, .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 12px 25px;
+            border-radius: 50px; font-size: 16px; font-weight: 700; cursor: pointer; margin: 0 5px;
+            transition: all 0.3s ease; box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4); font-family: 'Orbitron', monospace;
+        }
+        select { appearance: none; -webkit-appearance: none; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22/%3E%3C/svg%3E');
+            background-repeat: no-repeat; background-position: right 15px top 50%; background-size: 10px; padding-right: 40px;
+        }
+        .btn:hover, select:hover { transform: translateY(-3px); box-shadow: 0 12px 24px rgba(102, 126, 234, 0.6); }
+        .btn:disabled { background: linear-gradient(135deg, #bdc3c7, #95a5a6); cursor: not-allowed; transform: none; }
+        #showReportBtn { background: linear-gradient(135deg, #ffc107, #ff9800); }
+        
+        .info-icon { background: rgba(255,255,255,0.3); border-radius: 50%; color: white; text-align: center; font-weight: bold; display: inline-block; width: 24px; height: 24px; line-height: 24px; cursor: pointer; transition: all 0.3s ease; }
+        .info-icon:hover { transform: scale(1.2) rotate(360deg); }
+        
+        .game-area { background: var(--bg-dark-alpha); border: 1px solid var(--border-alpha); padding: 20px; border-radius: 20px; width: 100%; max-width: 600px; margin-bottom: 20px; }
+        .stats{display:flex;justify-content:space-around;align-items:center;background:var(--bg-dark-alpha);padding:15px;border-radius:15px;margin-bottom:20px}.stat-item{text-align:center}.stat-value{font-size:24px;font-weight:700;background:linear-gradient(45deg,#ff6b6b,#feca57);-webkit-background-clip:text;-webkit-text-fill-color:transparent}.stat-label{font-size:14px;color:var(--text-secondary);margin-top:5px}.progress-bar{width:100%;height:8px;background:var(--bg-darker-alpha);border-radius:4px;overflow:hidden;margin-bottom:15px}.progress-fill{height:100%;background:linear-gradient(90deg,#667eea,#764ba2);transition:width .3s ease}#taskInstruction{text-align:center;font-weight:700;margin-bottom:15px;padding:10px;border-radius:15px;transition:all .3s ease;animation:phaseGlow 2s ease-in-out infinite alternate;text-shadow:0 2px 4px rgba(0,0,0,.3);min-height:40px}@keyframes phaseGlow{0%{box-shadow:0 0 20px rgba(255,255,255,.2)}100%{box-shadow:0 0 30px rgba(255,255,255,.4)}}.grid{display:grid;gap:10px}.grid.size-3{grid-template-columns:repeat(3,1fr)}.grid.size-4{grid-template-columns:repeat(4,1fr)}.grid.size-5{grid-template-columns:repeat(5,1fr)}.grid.size-6{grid-template-columns:repeat(6,1fr)}.card{aspect-ratio:1;border:none;border-radius:15px;font-size:clamp(16px,4vw,32px);font-weight:900;color:var(--text-primary);cursor:pointer;transition:all .4s cubic-bezier(.175,.885,.32,1.275);display:flex;align-items:center;justify-content:center;user-select:none;position:relative;overflow:hidden;box-shadow:0 8px 16px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.2);background:linear-gradient(135deg,#2ecc71,#27ae60)}.card:hover{transform:translateY(-5px) scale(1.05);box-shadow:0 15px 30px rgba(0,0,0,.5),0 0 20px rgba(255,255,255,.3)}.card.no-go{background:linear-gradient(135deg,#ff9500,#ff6b00)}.card.hidden .cell-content{opacity:0}.card.matched{background:linear-gradient(135deg,#9b59b6,#8e44ad);transform:scale(.95);cursor:not-allowed;animation:matchPulse .6s ease-in-out;opacity:.7}@keyframes matchPulse{0%{transform:scale(.95)}50%{transform:scale(1.1)}100%{transform:scale(.95)}}.card.error{background:linear-gradient(135deg,#e74c3c,#c0392b);animation:incorrectShake .6s ease-out}@keyframes incorrectShake{0%,100%{transform:translateX(0)}25%{transform:translateX(-10px)}75%{transform:translateX(10px)}}.message{text-align:center;padding:15px;margin:10px 0;border-radius:10px;font-weight:700;background:var(--bg-darker-alpha);border:1px solid var(--border-alpha)}
+
+        /* --- [V5] INTEGRATED COGNITIVE DASHBOARD STYLES --- */
+        .dashboard {
+            background: var(--bg-dark-alpha); border: 1px solid var(--border-alpha);
+            padding: 20px; border-radius: 20px; width: 100%; max-width: 860px; margin-top: 20px;
+        }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 10px; }
+        .dashboard-header h3 { background: linear-gradient(45deg, var(--warning-color), var(--glow-color)); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 0; font-size: 1.5rem; }
+        #clearRecordsBtn { background: linear-gradient(135deg, var(--danger-color), #c0392b); padding: 8px 15px; font-size: 12px; }
+
+        .dashboard-controls { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; background: var(--bg-darker-alpha); padding: 10px; border-radius: 10px; }
+        #filterMode { padding: 8px 15px; font-size: 14px; border-radius: 8px; background: rgba(255,255,255,0.1); }
+
+        .dashboard-main { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        
+        .dashboard-profile, .dashboard-summary { background: var(--bg-darker-alpha); padding: 15px; border-radius: 15px; }
+        .dashboard-summary-title, .dashboard-profile-title { text-align: center; margin-bottom: 10px; font-size: 1.1em; color: var(--text-secondary); }
+        
+        .radar-chart-container { position: relative; width: 100%; aspect-ratio: 1; display: flex; align-items: center; justify-content: center; }
+        .radar-chart { width: 100%; height: 100%; }
+        .radar-grid { stroke: rgba(255,255,255,0.2); stroke-width: 1; fill: none; }
+        .radar-axis { stroke: rgba(255,255,255,0.3); stroke-width: 1; }
+        .radar-area { fill: rgba(78, 205, 196, 0.4); stroke: var(--glow-color); stroke-width: 2; transition: all 0.5s ease; animation: radar-fade-in 1s; }
+        .radar-labels { font-size: clamp(8px, 2.5vw, 10px); fill: var(--text-primary); text-anchor: middle; }
+        @keyframes radar-fade-in { from { opacity: 0; transform: scale(0.5); } to { opacity: 1; transform: scale(1); } }
+        
+        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; text-align: center; margin-bottom: 15px; }
+        .summary-item .value { font-size: 1.6rem; font-weight: bold; color: var(--primary-accent); }
+        .summary-item .label { font-size: 0.8rem; color: var(--text-secondary); }
+        .summary-insight { background: var(--bg-dark-alpha); border-left: 3px solid var(--primary-accent); padding: 10px; border-radius: 5px; text-align: center; font-size: 0.9em; min-height: 40px; display: flex; align-items: center; justify-content: center;}
+        
+        #trendChartContainer { background: var(--bg-darker-alpha); padding: 15px; border-radius: 15px; margin-bottom: 15px; }
+        .chart-svg { width: 100%; height: 180px; }
+        .chart-line{fill:none;stroke:var(--glow-color);stroke-width:3;stroke-linecap:round;stroke-linejoin:round;animation:draw-line 1.5s ease-out forwards}.chart-area{fill:url(#chartGradient);opacity:.5;animation:fade-in 1s ease-out forwards}.chart-point{fill:var(--warning-color);stroke:rgba(0,0,0,.5);stroke-width:2;transition:r .3s ease}.chart-point:hover{r:7}.chart-avg-line{stroke:var(--primary-accent);stroke-width:1.5;stroke-dasharray:4,4}@keyframes draw-line{from{stroke-dasharray:1000;stroke-dashoffset:1000}to{stroke-dasharray:1000;stroke-dashoffset:0}}@keyframes fade-in{from{opacity:0}to{opacity:.5}}
+
+        #recordsList { background: var(--bg-darker-alpha); padding: 5px 15px 15px; border-radius: 15px; }
+        .record-item { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 15px; padding: 12px 10px; border-bottom: 1px solid var(--border-alpha); transition: all 0.3s ease; }
+        .record-item:last-child { border-bottom: none; }
+        .record-item:hover { background: rgba(255, 255, 255, 0.05); }
+        .record-item.is-pb { border-left: 4px solid var(--warning-color); }
+        .record-mode-icon { font-size: 1.2rem; width: 24px; text-align: center; }
+        .record-details-main { font-size: 0.9em; }
+        .record-details-sub { font-size: 0.8em; opacity: 0.7; display: flex; gap: 10px; margin-top: 4px; }
+        .record-stats { text-align: right; font-weight: bold; font-size: 1.1em; color: var(--warning-color); }
+        .record-item:not(.is-pb) .record-stats { color: var(--text-primary); }
+        .tier-badge { padding: 2px 6px; font-size: 0.7em; border-radius: 4px; color: #000; }
+        .tier-Novice { background-color: #95a5a6; } .tier-Practitioner { background-color: #2ecc71; }
+        .tier-Adept { background-color: #3498db; } .tier-Expert { background-color: #9b59b6; }
+        .tier-Master { background: linear-gradient(45deg, #f1c40f, #f39c12); }
+        .empty-state { text-align: center; padding: 30px; color: var(--text-secondary); }
+        
+        @media (max-width: 768px) {
+            .dashboard-main { grid-template-columns: 1fr; }
+            .title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-particles" id="particles"></div>
+    <div class="game-container">
+        <div class="header">
+            <h1 class="title">🎯 高级认知功能训练</h1>
+            <p>专注力、记忆力与思维灵活性挑战</p>
+        </div>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="gridSize">网格大小:</label>
+                <select id="gridSize">
+                    <option value="3">3×3</option>
+                    <option value="4">4×4</option>
+                    <option value="5" selected>5×5</option>
+                    <option value="6">6×6</option>
+                </select>
+            </div>
+            <div class="control-group">
+                <label for="trainingMode">训练模式:</label>
+                <select id="trainingMode">
+                    <option value="standard">标准模式</option>
+                    <option value="reverse">逆序模式</option>
+                    <option value="inhibit">抑制控制</option>
+                    <option value="switch">任务切换</option>
+                    <option value="memory">空间记忆</option>
+                </select>
+                <span class="info-icon" id="infoBtn">?</span>
+            </div>
+            <button class="btn" id="startBtn">开始训练</button>
+            <button class="btn" id="resetBtn">重置</button>
+            <button class="btn" id="showReportBtn" style="display: none;">生成报告</button>
+        </div>
+
+        <div class="game-area">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="stats">
+                <div class="stat-item"><div class="stat-value" id="currentNumber">1</div><div class="stat-label">下一个目标</div></div>
+                <div class="stat-item"><div class="stat-value" id="timeElapsed">0</div><div class="stat-label">用时(秒)</div></div>
+                <div class="stat-item"><div class="stat-value" id="errors">0</div><div class="stat-label">错误次数</div></div>
+            </div>
+            <div id="taskInstruction"></div>
+            <div class="grid size-5" id="gameGrid"></div>
+            <div class="message" id="message" style="display: none;"></div>
+        </div>
+
+        <div class="dashboard">
+            <div class="dashboard-header">
+                <h3>🧠 个人认知仪表盘</h3>
+                <button class="btn" id="clearRecordsBtn">清空记录</button>
+            </div>
+            <div class="dashboard-controls">
+                <select id="filterMode"><option value="all">所有模式</option></select>
+            </div>
+            <div class="dashboard-main">
+                <div class="dashboard-profile">
+                    <h4 class="dashboard-profile-title">五维能力模型</h4>
+                    <div class="radar-chart-container">
+                        <svg id="cognitiveProfileChart" class="radar-chart"></svg>
+                    </div>
+                </div>
+                <div class="dashboard-summary">
+                    <h4 class="dashboard-summary-title">核心数据摘要</h4>
+                    <div class="summary-grid">
+                        <div class="summary-item"><div class="value" id="summaryTotalPlays">-</div><div class="label">总训练</div></div>
+                        <div class="summary-item"><div class="value" id="summaryPBs">-</div><div class="label">个人最佳</div></div>
+                        <div class="summary-item"><div class="value" id="summaryAvgCEI">-</div><div class="label">平均CEI</div></div>
+                        <div class="summary-item"><div class="value" id="summaryConsistency">-</div><div class="label">一致性</div></div>
+                    </div>
+                    <div class="summary-insight" id="summaryInsight">开始训练，解锁您的个人洞察...</div>
+                </div>
+            </div>
+            <div id="trendChartContainer">
+                 <svg id="trendChart" class="chart-svg"></svg>
+            </div>
+            <div id="recordsList"></div>
+        </div>
+        </div>
+    
+    <div class="modal-overlay" id="infoModal">...</div>
+    <div class="modal-overlay" id="reportModal">...</div>
+    
+    <audio id="correctSound" src="data:audio/mpeg;base64,..."></audio>
+    <audio id="incorrectSound" src="data:audio/mpeg;base64,..."></audio>
+    <audio id="winSound" src="data:audio/mpeg;base64,..."></audio>
+
+<script>
+// --- [V5] FINAL INTEGRATED SCRIPT ---
+
+class CognitiveTrainingApp {
+    constructor() {
+        // Game State
+        this.startTime = null;
+        this.errors = 0;
+        this.isGameActive = false;
+        this.timer = null;
+        this.lastGameStats = null;
+        this.currentTargets = [];
+        this.currentTargetIndex = 0;
+        this.noGoItems = new Set();
+        this.taskSwitchState = { task: 'number', numbers: [], letters: [], numIndex: 0, letterIndex: 0 };
+        
+        this.initElements();
+        this.bindEvents();
+        
+        // Initial setup
+        this.gridSize = parseInt(this.gridSizeSelect.value);
+        this.trainingMode = this.trainingModeSelect.value;
+        this.maxNumber = this.gridSize * this.gridSize;
+        this.gameGrid.className = `grid size-${this.gridSize}`;
+        
+        this.resetGame(true);
+        this.initDashboard();
+    }
+
+    // --- ELEMENT INITIALIZATION & EVENT BINDING ---
+    initElements() {
+        const get = (id) => document.getElementById(id);
+        // Game Elements
+        this.gridSizeSelect = get('gridSize'); this.trainingModeSelect = get('trainingMode');
+        this.startBtn = get('startBtn'); this.resetBtn = get('resetBtn'); this.showReportBtn = get('showReportBtn');
+        this.gameGrid = get('gameGrid'); this.currentNumberDisplay = get('currentNumber');
+        this.timeDisplay = get('timeElapsed'); this.errorsDisplay = get('errors');
+        this.messageDiv = get('message'); this.progressFill = get('progressFill');
+        this.taskInstruction = get('taskInstruction'); this.infoBtn = get('infoBtn');
+        // Dashboard Elements
+        this.filterModeSelect = get('filterMode'); this.clearRecordsBtn = get('clearRecordsBtn');
+        this.summaryTotalPlays = get('summaryTotalPlays'); this.summaryPBs = get('summaryPBs');
+        this.summaryAvgCEI = get('summaryAvgCEI'); this.summaryConsistency = get('summaryConsistency');
+        this.summaryInsight = get('summaryInsight'); this.radarChartSVG = get('cognitiveProfileChart');
+        this.trendChartSVG = get('trendChart'); this.recordsList = get('recordsList');
+        // Sounds
+        this.correctSound = get('correctSound'); this.incorrectSound = get('incorrectSound'); this.winSound = get('winSound');
+    }
+    
+    bindEvents() {
+        // Game Controls
+        this.startBtn.addEventListener('click', () => this.startGame());
+        this.resetBtn.addEventListener('click', () => this.resetGame(true));
+        this.gridSizeSelect.addEventListener('change', () => this.updateGridSize());
+        this.trainingModeSelect.addEventListener('change', () => this.updateTrainingMode());
+        // Dashboard Controls
+        this.filterModeSelect.addEventListener('change', () => this.updateDashboard());
+        this.clearRecordsBtn.addEventListener('click', () => this.clearRecords());
+    }
+
+    // --- CORE GAME LOGIC (from V3) ---
+    updateGridSize() { this.gridSize = parseInt(this.gridSizeSelect.value); this.maxNumber = this.gridSize * this.gridSize; this.gameGrid.className = `grid size-${this.gridSize}`; this.resetGame(true); }
+    updateTrainingMode() { this.trainingMode = this.trainingModeSelect.value; this.resetGame(true); }
+    resetGame(fullReset = false) { this.isGameActive = false; this.errors = 0; this.currentTargetIndex = 0; clearInterval(this.timer); this.startBtn.disabled = false; this.gridSizeSelect.disabled = false; this.trainingModeSelect.disabled = false; this.showReportBtn.style.display = 'none'; if (fullReset) this.createGrid(); this.updateDisplay(); this.hideMessage(); this.progressFill.style.width = '0%'; this.timeDisplay.textContent = '0'; }
+    createGrid() { this.gameGrid.innerHTML = ''; const items = this.generateItemsForMode(); this.shuffleArray(items); items.forEach(item => { const card = document.createElement('div'); card.className = 'card'; card.dataset.value = item; const content = document.createElement('span'); content.className = 'cell-content'; content.textContent = item; card.appendChild(content); if (this.trainingMode === 'inhibit' && this.noGoItems.has(item)) card.classList.add('no-go'); card.addEventListener('click', () => this.handleCellClick(card)); this.gameGrid.appendChild(card); }); }
+    generateItemsForMode() { let items = Array.from({ length: this.maxNumber }, (_, i) => i + 1); this.currentTargets = []; this.noGoItems.clear(); switch(this.trainingMode) { case 'standard': this.currentTargets = [...items]; break; case 'reverse': this.currentTargets = items.slice().reverse(); break; case 'inhibit': let allItems = [...items]; const noGoCount = Math.floor(this.maxNumber * 0.2); this.shuffleArray(allItems); for(let i = 0; i < noGoCount; i++) this.noGoItems.add(allItems[i]); this.currentTargets = items.filter(item => !this.noGoItems.has(item)).sort((a, b) => a - b); break; case 'switch': const numCount = Math.ceil(this.maxNumber / 2); items = []; this.taskSwitchState.numbers = Array.from({ length: numCount }, (_, i) => i + 1); this.taskSwitchState.letters = Array.from({ length: this.maxNumber - numCount }, (_, i) => String.fromCharCode(65 + i)); items.push(...this.taskSwitchState.numbers, ...this.taskSwitchState.letters); this.currentTargets = items; break; case 'memory': this.currentTargets = [...items]; break; } return (this.trainingMode === 'switch') ? this.shuffleArray([...this.taskSwitchState.numbers, ...this.taskSwitchState.letters]) : items; }
+    startGame() { this.resetGame(false); this.createGrid(); this.isGameActive = true; this.startTime = Date.now(); this.currentTargetIndex = 0; if (this.trainingMode === 'switch') { this.taskSwitchState.task = 'number'; this.taskSwitchState.numIndex = 0; this.taskSwitchState.letterIndex = 0; } if (this.trainingMode === 'memory') { const displayTime = Math.max(1500, this.maxNumber * 100); this.showMessage(`记忆时间...`, 'info'); setTimeout(() => { this.gameGrid.querySelectorAll('.card').forEach(c => c.classList.add('hidden')); this.hideMessage(); }, displayTime); } this.startBtn.disabled = true; this.gridSizeSelect.disabled = true; this.trainingModeSelect.disabled = true; this.updateDisplay(); this.startTimer(); }
+    
+    // =============================    
+    // === MODIFICATION 1 START ===
+    // =============================
+    handleCellClick(card) {
+        if (!this.isGameActive || card.classList.contains('matched')) return;
+        const clickedValueStr = card.dataset.value;
+        const clickedValue = isNaN(parseInt(clickedValueStr)) ? clickedValueStr : parseInt(clickedValueStr);
+        let isCorrect = false;
+
+        if (this.trainingMode === 'inhibit') {
+            if (card.classList.contains('no-go')) {
+                this.triggerError(card);
+                return;
+            }
+            isCorrect = (clickedValue === this.currentTargets[this.currentTargetIndex]);
+        } else if (this.trainingMode === 'switch') {
+            const { task, numbers, letters, numIndex, letterIndex } = this.taskSwitchState;
+            if (task === 'number' && typeof clickedValue === 'number' && clickedValue === numbers[numIndex]) {
+                isCorrect = true;
+                this.taskSwitchState.numIndex++;
+                // FIX: Force switch if numbers are done, otherwise check for random switch.
+                if (this.taskSwitchState.numIndex >= numbers.length) {
+                    this.switchTask();
+                } else if (numIndex > 0 && numIndex % (3 + Math.floor(Math.random() * 3)) === 0) {
+                    this.switchTask();
+                }
+            } else if (task === 'letter' && typeof clickedValue === 'string' && clickedValue === letters[letterIndex]) {
+                isCorrect = true;
+                this.taskSwitchState.letterIndex++;
+                // FIX: Force switch if letters are done, otherwise check for random switch.
+                if (this.taskSwitchState.letterIndex >= letters.length) {
+                    this.switchTask();
+                } else if (letterIndex > 0 && letterIndex % (3 + Math.floor(Math.random() * 3)) === 0) {
+                    this.switchTask();
+                }
+            }
+            if (isCorrect) this.currentTargetIndex++;
+        } else {
+            isCorrect = (clickedValue === this.currentTargets[this.currentTargetIndex]);
+        }
+
+        if (isCorrect) {
+            this.playSound(this.correctSound);
+            card.classList.add('matched');
+            if (this.trainingMode === 'memory') card.classList.remove('hidden');
+            if (this.trainingMode !== 'switch') this.currentTargetIndex++;
+            const totalTargets = (this.trainingMode === 'switch') ? (this.taskSwitchState.numbers.length + this.taskSwitchState.letters.length) : this.currentTargets.length;
+            this.progressFill.style.width = (this.currentTargetIndex / totalTargets) * 100 + '%';
+            if (this.currentTargetIndex >= totalTargets) {
+                this.endGame(true);
+            } else {
+                this.updateDisplay();
+            }
+        } else {
+            this.triggerError(card);
+        }
+    }
+    // ===========================    
+    // === MODIFICATION 1 END ===
+    // ===========================
+
+    switchTask() { const { task, numIndex, numbers, letterIndex, letters } = this.taskSwitchState; if (task === 'number' && letterIndex < letters.length) this.taskSwitchState.task = 'letter'; else if (task === 'letter' && numIndex < numbers.length) this.taskSwitchState.task = 'number'; this.updateDisplay(); }
+    triggerError(card) { this.playSound(this.incorrectSound); card.classList.add('error'); this.errors++; this.errorsDisplay.textContent = this.errors; setTimeout(() => card.classList.remove('error'), 600); }
+    endGame(completed) { this.isGameActive = false; clearInterval(this.timer); this.startBtn.disabled = false; this.gridSizeSelect.disabled = false; this.trainingModeSelect.disabled = false; if (completed) { this.playSound(this.winSound); const totalTime = Math.max(1, Math.floor((Date.now() - this.startTime) / 1000)); this.showMessage(`🎉 恭喜完成！用时：${totalTime}秒，错误：${this.errors}次`, 'success'); const totalItems = (this.trainingMode === 'switch') ? (this.taskSwitchState.numbers.length + this.taskSwitchState.letters.length) : this.currentTargets.length; this.lastGameStats = { time: totalTime, errors: this.errors, gridSize: this.gridSize, mode: this.trainingMode, totalItems: totalItems }; this.saveRecord(this.lastGameStats); this.showReportBtn.style.display = 'inline-block'; } }
+    updateDisplay() { let nextTarget = ''; if (this.isGameActive) { if (this.trainingMode === 'switch') { const { task, numbers, letters, numIndex, letterIndex } = this.taskSwitchState; nextTarget = (task === 'number') ? (numbers[numIndex] || '...') : (letters[letterIndex] || '...'); this.taskInstruction.textContent = `请按顺序点击【${task === 'number' ? '数字' : '字母'}】`; const isNumberTask = task === 'number'; this.gameGrid.style.background = isNumberTask ? 'rgba(52, 152, 219, 0.2)' : 'rgba(46, 204, 113, 0.2)'; this.taskInstruction.style.background = isNumberTask ? 'linear-gradient(135deg, #3498db, #2980b9)' : 'linear-gradient(135deg, #2ecc71, #27ae60)'; } else { nextTarget = this.currentTargets[this.currentTargetIndex] || '🎉'; } } else { nextTarget = (this.trainingMode === 'reverse') ? this.maxNumber : '1'; } this.currentNumberDisplay.textContent = nextTarget; this.errorsDisplay.textContent = this.errors; if (!this.isGameActive) { this.taskInstruction.textContent = ''; this.taskInstruction.style.background = 'transparent'; } }
+    
+    // --- DASHBOARD LOGIC (from V4, simplified) ---
+    initDashboard() {
+        const modes = { 'standard': '标准', 'reverse': '逆序', 'inhibit': '抑制', 'switch': '切换', 'memory': '记忆' };
+        Object.keys(modes).forEach(key => this.filterModeSelect.innerHTML += `<option value="${key}">${modes[key]}</option>`);
+        this.updateDashboard();
+    }
+    
+    updateDashboard() {
+        const allRecords = this.getRecords();
+        const filter = this.filterModeSelect.value;
+        const filteredRecords = (filter === 'all') ? allRecords : allRecords.filter(r => r.mode === filter);
+
+        this.updateSummary(allRecords, filteredRecords);
+        this.displayRadarChart(allRecords);
+        this.displayTrendChart(filteredRecords);
+        this.displayRecordsList(filteredRecords);
+    }
+    
+    updateSummary(allRecords, filteredRecords) {
+        if (allRecords.length === 0) {
+            this.summaryTotalPlays.textContent = '0'; this.summaryPBs.textContent = '0'; this.summaryAvgCEI.textContent = '-';
+            this.summaryConsistency.textContent = '-'; this.summaryInsight.textContent = '开始训练，解锁您的个人洞察...'; return;
+        }
+        this.summaryTotalPlays.textContent = allRecords.length;
+        this.summaryPBs.textContent = Object.keys(this.getPersonalBests(allRecords)).length;
+
+        const filteredCEIs = filteredRecords.map(r => this.calculateCEI(r));
+        const avgCEI = filteredCEIs.length > 0 ? Math.round(filteredCEIs.reduce((a, b) => a + b, 0) / filteredCEIs.length) : 0;
+        this.summaryAvgCEI.textContent = avgCEI || '-';
+        
+        if (filteredCEIs.length > 1) {
+            const mean = avgCEI;
+            const stdDev = Math.sqrt(filteredCEIs.map(x => Math.pow(x - mean, 2)).reduce((a, b) => a + b) / filteredCEIs.length);
+            const consistency = Math.max(0, Math.round(100 - (stdDev / mean) * 100));
+            this.summaryConsistency.textContent = `${consistency}%`;
+        } else {
+            this.summaryConsistency.textContent = '-';
+        }
+        this.summaryInsight.textContent = this.generateInsight(allRecords);
+    }
+    
+    generateInsight(allRecords) {
+        if (allRecords.length < 3) return "继续训练以获得更深入的分析。";
+        const skillScores = this.getCognitiveProfileScores(allRecords);
+        const weakestSkill = Object.keys(skillScores).reduce((a, b) => skillScores[a] < skillScores[b] ? a : b);
+        const skillNames = { processingSpeed: '处理速度', workingMemory: '工作记忆', inhibitoryControl: '抑制控制', cognitiveFlexibility: '认知灵活性', visualSpatial: '空间记忆' };
+        return `当前需重点关注 “${skillNames[weakestSkill]}” 能力的提升。`;
+    }
+
+    displayRadarChart(allRecords) {
+        this.radarChartSVG.innerHTML = '';
+        if (allRecords.length === 0) { this.radarChartSVG.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="var(--text-secondary)" font-size="12">暂无数据</text>`; return; }
+        const scores = this.getCognitiveProfileScores(allRecords);
+        const labels = ['速度', '工作记忆', '抑制', '灵活性', '空间记忆'];
+        const dataPoints = [scores.processingSpeed, scores.workingMemory, scores.inhibitoryControl, scores.cognitiveFlexibility, scores.visualSpatial];
+        const size = this.radarChartSVG.getBoundingClientRect().width;
+        const center = size / 2; const radius = center * 0.75;
+        const angleSlice = (Math.PI * 2) / labels.length;
+        for (let i = 1; i <= 4; i++) { let path = 'M '; for (let j = 0; j < labels.length; j++) { const r = radius * (i / 4); const x = center + r * Math.cos(angleSlice * j - Math.PI / 2); const y = center + r * Math.sin(angleSlice * j - Math.PI / 2); path += `${x},${y} L `; } this.radarChartSVG.innerHTML += `<path d="${path.slice(0, -2)}Z" class="radar-grid" />`; }
+        labels.forEach((label, i) => { const x2 = center + radius * Math.cos(angleSlice * i - Math.PI / 2); const y2 = center + radius * Math.sin(angleSlice * i - Math.PI / 2); this.radarChartSVG.innerHTML += `<line x1="${center}" y1="${center}" x2="${x2}" y2="${y2}" class="radar-axis" />`; const labelX = center + (radius * 1.2) * Math.cos(angleSlice * i - Math.PI / 2); const labelY = center + (radius * 1.25) * Math.sin(angleSlice * i - Math.PI / 2); this.radarChartSVG.innerHTML += `<text x="${labelX}" y="${labelY}" class="radar-labels">${label}</text>`; });
+        let dataPath = 'M '; dataPoints.forEach((point, i) => { const r = radius * (point / 100); const x = center + r * Math.cos(angleSlice * i - Math.PI / 2); const y = center + r * Math.sin(angleSlice * i - Math.PI / 2); dataPath += `${x},${y} L `; }); this.radarChartSVG.innerHTML += `<path d="${dataPath.slice(0, -2)}Z" class="radar-area" />`;
+    }
+    
+    displayTrendChart(records) { this.trendChartSVG.innerHTML = ''; if (records.length < 2) { this.trendChartSVG.innerHTML = `<text x="50%" y="50%" text-anchor="middle" fill="var(--text-secondary)">当前筛选条件下数据不足</text>`; return; } const data = records.map(r => ({ value: this.calculateCEI(r) })).slice(-15); const width = this.trendChartSVG.clientWidth; const height = this.trendChartSVG.clientHeight; const padding = { top: 15, right: 10, bottom: 5, left: 10 }; const maxValue = Math.max(...data.map(d => d.value)); const minValue = Math.min(...data.map(d => d.value)); const valueRange = maxValue - minValue === 0 ? 1 : maxValue - minValue; const xStep = (width - padding.left - padding.right) / (data.length - 1); const getCoords = (d, i) => ({ x: padding.left + i * xStep, y: padding.top + (height - padding.top - padding.bottom) * (1 - (d.value - minValue) / valueRange) }); let linePath = "M"; data.forEach((d, i) => { const {x, y} = getCoords(d, i); if (i === 0) { linePath += `${x},${y}`; } else { const {x: prevX, y: prevY} = getCoords(data[i-1], i-1); const cp1x = prevX + xStep * 0.5; const cp2x = x - xStep * 0.5; linePath += ` C ${cp1x},${prevY} ${cp2x},${y} ${x},${y}`; } }); this.trendChartSVG.innerHTML = `<path class="chart-line" d="${linePath}" />`; }
+
+    displayRecordsList(records) {
+        this.recordsList.innerHTML = '';
+        if (records.length === 0) { this.recordsList.innerHTML = `<div class="empty-state">没有符合条件的记录。</div>`; return; }
+        const pbs = this.getPersonalBests(this.getRecords());
+        const modeIcons = {'standard': '🎯', 'reverse': '⏪', 'inhibit': '✋', 'switch': '🔄', 'memory': '🧠'};
+        records.sort((a,b) => new Date(b.date.replace(/-/g, '/')).getTime() - new Date(a.date.replace(/-/g, '/')).getTime());
+        this.recordsList.innerHTML = records.slice(0, 10).map(r => { const key = `${r.mode}-${r.gridSize}`; const isPb = pbs[key] && pbs[key].date === r.date; const cei = this.calculateCEI(r); const tier = this.getTier(cei); return `<div class="record-item ${isPb ? 'is-pb' : ''}"><span class="record-mode-icon">${modeIcons[r.mode]||'🔹'}</span><div><div class="record-details-main">${r.gridSize}×${r.gridSize} (${this.getModeName(r.mode)})</div><div class="record-details-sub"><span>${r.date}</span><span class="tier-badge tier-${tier.name}">${tier.name}</span></div></div><div class="record-stats">${cei} CEI ${isPb?'🏆':''}</div></div>`; }).join('');
+    }
+
+    // --- DATA & UTILITY FUNCTIONS ---
+    // =============================    
+    // === MODIFICATION 2 START ===
+    // =============================
+    calculateCEI(stats) {
+        const { time, errors, gridSize, totalItems, mode } = stats;
+        if (time <= 0) return 0;
+        // TWEAK: Increased multiplier for 'memory' mode for a better sense of achievement.
+        const modeMultipliers = { standard: 1.0, reverse: 1.1, inhibit: 1.25, memory: 1.6, switch: 1.5 };
+        const multiplier = modeMultipliers[mode] || 1.0;
+        const errorPenalty = (errors * (gridSize * 2.5));
+        const baseScore = ((totalItems * 2.5) / time) * 100;
+        return Math.max(0, Math.round((baseScore - errorPenalty) * multiplier));
+    }
+    // ===========================    
+    // === MODIFICATION 2 END ===
+    // ===========================
+
+    getTier(cei) { if (cei > 1200) return { name: 'Master' }; if (cei > 900) return { name: 'Expert' }; if (cei > 600) return { name: 'Adept' }; if (cei > 300) return { name: 'Practitioner' }; return { name: 'Novice' }; }
+    getPersonalBests(records) { return records.reduce((acc, r) => { const key = `${r.mode}-${r.gridSize}`; const currentCEI = this.calculateCEI(r); if (!acc[key] || currentCEI > this.calculateCEI(acc[key])) { acc[key] = r; } return acc; }, {}); }
+    getCognitiveProfileScores(allRecords) { const maxCEIbyMode = allRecords.reduce((acc, r) => { const cei = this.calculateCEI(r); if (!acc[r.mode] || cei > acc[r.mode]) { acc[r.mode] = cei; } return acc; }, {}); const getBestCEIForModes = (modes) => modes.reduce((max, mode) => Math.max(max, maxCEIbyMode[mode] || 0), 0); const scores = { processingSpeed: getBestCEIForModes(['standard']), workingMemory: getBestCEIForModes(['reverse', 'memory']), inhibitoryControl: getBestCEIForModes(['inhibit']), cognitiveFlexibility: getBestCEIForModes(['switch']), visualSpatial: getBestCEIForModes(['memory']) }; const maxScore = Math.max(1, ...Object.values(scores)); const normalize = (score) => Math.round((score / maxScore) * 100); for(const key in scores) { scores[key] = normalize(scores[key]); } return scores; }
+    getRecords() { return JSON.parse(localStorage.getItem('cognitiveRecordsV5') || '[]'); }
+    saveRecord(stats) { const records = this.getRecords(); const date = new Date(); const formattedDate = `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`; records.push({ ...stats, date: formattedDate }); localStorage.setItem('cognitiveRecordsV5', JSON.stringify(records)); this.updateDashboard(); }
+    clearRecords() { if (confirm('此操作将永久删除所有训练数据。确定吗？')) { localStorage.removeItem('cognitiveRecordsV5'); this.updateDashboard(); } }
+    getModeName(mode) { const names = {'standard': '标准', 'reverse': '逆序', 'inhibit': '抑制', 'switch': '切换', 'memory': '记忆'}; return names[mode] || mode; }
+    shuffleArray(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
+    playSound(sound) { if(sound) { sound.currentTime = 0; sound.play().catch(e => {}); } } 
+    showMessage(text, type) { this.messageDiv.textContent = text; this.messageDiv.className = `message ${type}`; this.messageDiv.style.display = 'block'; }
+    hideMessage() { this.messageDiv.style.display = 'none'; }
+    startTimer() { this.timer = setInterval(() => { if (this.isGameActive) this.timeDisplay.textContent = Math.floor((Date.now() - this.startTime) / 1000); }, 200); }
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+    // Hide modal placeholder text
+    document.querySelectorAll('.modal-overlay').forEach(m => m.innerHTML = '');
+    // Initialize the application
+    new CognitiveTrainingApp();
+});
+</script>
+
+</body>
+</html>
