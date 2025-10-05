@@ -3,21 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>数字配对记忆游戏</title>
+    <title>认知能力分析：数字配对挑战 v3.0 Pro</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --primary-glow: rgba(78, 205, 196, 0.8);
+            --secondary-glow: rgba(102, 126, 234, 0.6);
+            /* [新增] 评级颜色体系 */
+            --tier-color-1: #e74c3c; /* 新手 */
+            --tier-color-2: #f39c12; /* 进阶 */
+            --tier-color-3: #3498db; /* 熟练 */
+            --tier-color-4: #2ecc71; /* 卓越 */
+            --tier-color-5: #9b59b6; /* 大师 */
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Orbitron', monospace;
-            background: linear-gradient(45deg, #667eea, #764ba2, #f093fb, #f5576c, #4facfe, #00f2fe);
+            background: linear-gradient(45deg, #1f264a, #2f3868, #5a4a78, #8b5a8b, #c26b9d);
             background-size: 400% 400%;
-            animation: gradientShift 15s ease infinite;
+            animation: gradientShift 20s ease infinite;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -25,789 +32,600 @@
             justify-content: center;
             padding: 20px;
             overflow-x: hidden;
+            color: white;
         }
 
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
-            25% { background-position: 100% 50%; }
-            50% { background-position: 100% 100%; }
-            75% { background-position: 0% 100%; }
+            50% { background-position: 100% 50%; }
         }
 
-        .floating-particles {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .particle {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            animation: float 6s ease-in-out infinite;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 1; }
-            50% { transform: translateY(-20px) rotate(180deg); opacity: 0.5; }
-        }
+        .floating-particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
+        .particle { position: absolute; width: 4px; height: 4px; background: rgba(255, 255, 255, 0.7); border-radius: 50%; animation: float 8s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); opacity: 0.8; } 50% { transform: translateY(-25px); opacity: 0.3; } }
 
         .game-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(20px);
-            border-radius: 25px;
-            padding: 40px;
-            box-shadow: 
-                0 20px 40px rgba(0, 0, 0, 0.3),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2),
-                inset 0 -1px 0 rgba(0, 0, 0, 0.1);
-            max-width: 650px;
-            width: 100%;
-            border: 2px solid rgba(255, 255, 255, 0.1);
-            position: relative;
-            z-index: 2;
+            background: rgba(10, 15, 40, 0.5); backdrop-filter: blur(25px); border-radius: 25px;
+            padding: 40px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+            max-width: 800px; width: 100%; border: 2px solid rgba(255, 255, 255, 0.1); position: relative; z-index: 2;
         }
-
         .game-container::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
+            content: ''; position: absolute; top: -2px; left: -2px; right: -2px; bottom: -2px;
             background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #ffeaa7, #dda0dd);
-            border-radius: 27px;
-            z-index: -1;
-            animation: borderGlow 3s ease-in-out infinite alternate;
+            border-radius: 27px; z-index: -1; animation: borderGlow 4s ease-in-out infinite alternate;
         }
+        @keyframes borderGlow { from { opacity: 0.4; transform: scale(1); } to { opacity: 0.8; transform: scale(1.01); } }
 
-        @keyframes borderGlow {
-            0% { opacity: 0.5; transform: scale(1); }
-            100% { opacity: 1; transform: scale(1.02); }
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
+        .header { text-align: center; margin-bottom: 30px; }
         .title {
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-size: 32px;
-            font-weight: 900;
-            margin-bottom: 10px;
-            text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-size: 32px; font-weight: 900; margin-bottom: 10px; text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
             animation: titlePulse 2s ease-in-out infinite alternate;
         }
-
-        @keyframes titlePulse {
-            0% { transform: scale(1); }
-            100% { transform: scale(1.05); }
-        }
+        @keyframes titlePulse { from { transform: scale(1); } to { transform: scale(1.05); } }
 
         .game-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-            padding: 20px;
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(10px);
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;
+            padding: 20px; background: rgba(0,0,0,0.2);
+            border-radius: 15px; border: 1px solid rgba(255, 255, 255, 0.1);
         }
-
-        .instruction {
-            font-size: 16px;
-            color: white;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
+        .instruction { font-size: 16px; font-weight: 700; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); }
         .timer {
-            font-size: 20px;
-            font-weight: 900;
-            background: linear-gradient(45deg, #ff6b6b, #feca57);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            min-width: 100px;
-            text-align: right;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            font-size: 20px; font-weight: 900; background: linear-gradient(45deg, #ff6b6b, #feca57); background-clip: text;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; min-width: 100px; text-align: right;
         }
 
-        .game-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-            justify-content: center;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
+        .game-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 15px; margin-bottom: 30px; justify-content: center; }
+        .card { width: 100%; aspect-ratio: 1; border: none; border-radius: 15px; font-size: 32px; font-weight: 900; cursor: pointer; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; align-items: center; justify-content: center; user-select: none; position: relative; overflow: hidden; box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); transform-style: preserve-3d; }
+        .card-inner { position: relative; width: 100%; height: 100%; transition: transform 0.4s; transform-style: preserve-3d; }
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card-face { position: absolute; width: 100%; height: 100%; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 15px; }
+        .card-front { background: linear-gradient(135deg, #ff9500, #ff6b00); }
+        .card-front::after { content: '?'; font-size: 48px; opacity: 0.7; }
+        .card-back { background: linear-gradient(135deg, #2ecc71, #27ae60); transform: rotateY(180deg); }
+        .card:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.5); }
+        .card:focus-visible { outline: 2px solid var(--primary-glow); box-shadow: 0 0 15px var(--primary-glow); }
+        .card.matched { background: linear-gradient(135deg, #9b59b6, #8e44ad); transform: scale(0.95); cursor: not-allowed; animation: matchPulse 0.6s ease-in-out; opacity: 0.7; }
+        .card.matched .card-inner { transform: rotateY(180deg); }
+        .card.shake { animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both; }
+        @keyframes matchPulse { 0% { transform: scale(0.95); } 50% { transform: scale(1.1); } 100% { transform: scale(0.95); } }
+        @keyframes shake { 10%, 90% { transform: translate3d(-1px, 0, 0); } 20%, 80% { transform: translate3d(2px, 0, 0); } 30%, 50%, 70% { transform: translate3d(-4px, 0, 0); } 40%, 60% { transform: translate3d(4px, 0, 0); } }
 
-        .card {
-            width: 90px;
-            height: 90px;
-            border: none;
-            border-radius: 15px;
-            font-size: 36px;
-            font-weight: 900;
-            color: white;
-            cursor: pointer;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            user-select: none;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 
-                0 8px 16px rgba(255, 149, 0, 0.4),
-                inset 0 1px 0 rgba(255, 255, 255, 0.2);
-            transform-style: preserve-3d;
-        }
+        .controls { text-align: center; margin-top: 25px; }
+        .btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 15px 30px; border-radius: 50px; font-size: 16px; font-weight: 700; cursor: pointer; margin: 0 10px; transition: all 0.3s ease; box-shadow: 0 8px 16px var(--secondary-glow); }
+        .btn:hover { transform: translateY(-3px); box-shadow: 0 12px 24px var(--secondary-glow); }
+        .btn:disabled { background: linear-gradient(135deg, #bdc3c7, #95a5a6); cursor: not-allowed; transform: none; box-shadow: 0 4px 8px rgba(189, 195, 199, 0.4); }
+
+        .phase-indicator { text-align: center; font-size: 20px; font-weight: 900; margin-bottom: 20px; padding: 15px; border-radius: 15px; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); animation: phaseGlow 2s ease-in-out infinite alternate; }
+        @keyframes phaseGlow { from { box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); } to { box-shadow: 0 0 30px rgba(255, 255, 255, 0.4); } }
+        .play-phase { background: linear-gradient(135deg, #f39c12, #e67e22); }
+        .ready-phase { background: linear-gradient(135deg, #3498db, #2980b9); }
         
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.4s;
-            transform-style: preserve-3d;
-        }
+        .analysis-report-screen, .history-screen { display: none; text-align: center; animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
+        /* --- 认知分析报告 v3.0 Pro 样式 --- */
+        .report-header { margin-bottom: 25px; }
+        .report-title { font-size: 28px; margin-bottom: 10px; }
+        .profile-title { font-size: 24px; font-weight: 900; color: #f1c40f; text-shadow: 0 0 10px rgba(241, 196, 15, 0.8); }
+
+        .report-container { display: grid; grid-template-columns: 280px 1fr; gap: 30px; text-align: left; }
+        .report-left, .report-right { display: flex; flex-direction: column; gap: 20px; }
         
-        .card-face {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            -webkit-backface-visibility: hidden;
-            backface-visibility: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 15px;
-        }
+        .radar-chart-container { position: relative; width: 100%; aspect-ratio: 1; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 15px; }
+        .radar-chart { width: 100%; height: 100%; }
+        .radar-grid { stroke: rgba(255, 255, 255, 0.2); stroke-width: 1; fill: none; }
+        .radar-axis { stroke: rgba(255, 255, 255, 0.3); stroke-width: 1; }
+        .radar-area { fill: rgba(78, 205, 196, 0.4); stroke: #4ecdc4; stroke-width: 2; }
+        .radar-point { fill: #4ecdc4; stroke: white; stroke-width: 2px; }
+        .radar-labels { font-size: 11px; fill: white; text-anchor: middle; font-weight: bold; }
 
-        .card-front {
-            background: linear-gradient(135deg, #ff9500, #ff6b00);
-        }
+        .stat-tiers-container { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; }
+        .stat-tier-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+        .stat-tier-item:last-child { margin-bottom: 0; }
+        .stat-tier-label { font-size: 14px; color: rgba(255,255,255,0.8); }
+        .stat-tier-value { font-size: 16px; font-weight: 700; padding: 4px 10px; border-radius: 20px; color: white; }
         
-        .card-front::after {
-            content: '?';
-            font-size: 48px;
-            color: white;
-            opacity: 0.7;
-        }
+        .profile-analysis, .dynamic-analysis { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; }
+        .analysis-section-title { font-size: 18px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+        .analysis-text { font-size: 15px; line-height: 1.7; color: rgba(255,255,255,0.9); }
         
-        .card-back {
-            background: linear-gradient(135deg, #2ecc71, #27ae60);
-            transform: rotateY(180deg);
-            color: white;
-        }
-
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-            transition: left 0.5s;
-        }
-
-        .card:hover {
-            transform: translateY(-5px) rotateZ(2deg);
-            box-shadow: 
-                0 15px 30px rgba(255, 149, 0, 0.6),
-                0 0 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .card:hover::before {
-            left: 100%;
-        }
+        .dynamic-insight { display: flex; align-items: flex-start; gap: 15px; margin-top: 15px; }
+        .sparkline-container { width: 120px; height: 40px; background: rgba(0,0,0,0.3); border-radius: 8px; flex-shrink: 0; display: flex; justify-content: center; align-items: center;}
+        .sparkline-svg { width: 100%; height: 100%; }
+        .sparkline-line { fill: none; stroke: #4ecdc4; stroke-width: 2; }
+        .sparkline-fill { fill: rgba(78, 205, 196, 0.2); }
         
-        .card.matched {
-            background: linear-gradient(135deg, #9b59b6, #8e44ad);
-            transform: scale(0.95);
-            cursor: not-allowed;
-            animation: matchPulse 0.6s ease-in-out;
-            opacity: 0.7;
-        }
+        .tooltip { position: fixed; background: #2c3e50; color: white; padding: 10px 15px; border-radius: 8px; font-size: 14px; max-width: 250px; z-index: 10; pointer-events: none; opacity: 0; transform: scale(0.95); transition: opacity 0.2s, transform 0.2s; text-align: left; }
+        .tooltip.active { opacity: 1; transform: scale(1); }
+        .history-link { display: inline-block; margin-top: 25px; color: #4ecdc4; text-decoration: none; cursor: pointer; font-size: 18px; font-weight: 700; transition: all 0.3s ease; text-shadow: 0 0 10px var(--primary-glow); }
+        .history-link:hover { color: #45b7d1; transform: translateY(-2px); }
+
+        /* --- 历史趋势图表样式 --- */
+        .chart-container { background: rgba(0,0,0,0.2); padding: 20px; border-radius: 15px; margin-bottom: 25px; }
+        .history-chart { width: 100%; height: 250px; }
+        .chart-axis-line, .chart-grid-line { stroke: rgba(255,255,255,0.2); stroke-width: 1; }
+        .chart-axis-text { fill: rgba(255,255,255,0.6); font-size: 10px; }
+        .chart-line { fill: none; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; transition: stroke .3s; }
+        .chart-point { r: 4; stroke: white; stroke-width: 2px; transition: r .3s; }
+        .chart-legend { display: flex; justify-content: center; gap: 20px; margin-top: 15px; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; }
+        .legend-color { width: 12px; height: 12px; border-radius: 3px; }
         
-        .card.matched .card-inner {
-             transform: rotateY(180deg);
-        }
-
-
-        @keyframes matchPulse {
-            0% { transform: scale(0.95); }
-            50% { transform: scale(1.1); }
-            100% { transform: scale(0.95); }
-        }
-
-        .controls {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 15px 30px;
-            border-radius: 50px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            margin: 0 10px;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 16px rgba(102, 126, 234, 0.4);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 24px rgba(102, 126, 234, 0.6);
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn:disabled {
-            background: linear-gradient(135deg, #bdc3c7, #95a5a6);
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: 0 4px 8px rgba(189, 195, 199, 0.4);
-        }
-
-        .result-screen {
-            display: none;
-            text-align: center;
-            padding: 40px;
-        }
-
-        .stars {
-            font-size: 50px;
-            margin: 25px 0;
-            animation: sparkle 1.5s ease-in-out infinite;
-        }
-
-        @keyframes sparkle {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
-
-        .star {
-            color: #34495e;
-            margin: 0 8px;
-            transition: all 0.3s ease;
-            text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-        }
-
-        .star.filled {
-            color: #f1c40f;
-            text-shadow: 0 0 20px rgba(241, 196, 15, 0.8);
-            animation: starGlow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes starGlow {
-            0% { filter: drop-shadow(0 0 5px #f1c40f); }
-            100% { filter: drop-shadow(0 0 15px #f1c40f); }
-        }
-
-        .score-display {
-            font-size: 56px;
-            font-weight: 900;
-            background: linear-gradient(45deg, #2c3e50, #4a6741);
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 25px 0;
-            text-shadow: 0 0 20px rgba(44, 62, 80, 0.5);
-            animation: scoreShine 2s ease-in-out infinite;
-        }
-
-        @keyframes scoreShine {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-
-        .memory-score {
-            font-size: 20px;
-            color: rgba(255, 255, 255, 0.9);
-            margin: 15px 0;
-            font-weight: 700;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .history-link {
-            display: inline-block;
-            margin-top: 25px;
-            color: #4ecdc4;
-            text-decoration: none;
-            cursor: pointer;
-            font-size: 18px;
-            font-weight: 700;
-            transition: all 0.3s ease;
-            text-shadow: 0 0 10px rgba(78, 205, 196, 0.5);
-        }
-
-        .history-link:hover {
-            color: #45b7d1;
-            text-shadow: 0 0 15px rgba(69, 183, 209, 0.8);
-            transform: translateY(-2px);
-        }
-
-        .history-screen {
-            display: none;
-            text-align: center;
-        }
-
-        .history-list {
-            text-align: left;
-            max-height: 350px;
-            overflow-y: auto;
-            margin: 25px 0;
-            padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .history-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 15px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .history-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            transform: translateX(5px);
-        }
-
-        .history-item:last-child {
-            border-bottom: none;
-        }
-
-        .phase-indicator {
-            text-align: center;
-            font-size: 20px;
-            font-weight: 900;
-            margin-bottom: 20px;
-            padding: 15px;
-            border-radius: 15px;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-            animation: phaseGlow 2s ease-in-out infinite alternate;
-        }
-
-        @keyframes phaseGlow {
-            0% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.2); }
-            100% { box-shadow: 0 0 30px rgba(255, 255, 255, 0.4); }
-        }
-
-        .play-phase {
-            background: linear-gradient(135deg, #f39c12, #e67e22);
-        }
-
-        .ready-phase {
-            background: linear-gradient(135deg, #3498db, #2980b9);
-        }
+        .history-list { text-align: left; max-height: 250px; overflow-y: auto; background: rgba(0,0,0,0.2); border-radius: 15px; padding: 0 10px; }
+        .history-item { display: flex; justify-content: space-between; padding: 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); }
+        .history-item:last-child { border-bottom: none; }
         
-        @media (max-width: 600px) {
-            .card {
-                width: 70px;
-                height: 70px;
-                font-size: 28px;
-            }
-            
-            .game-grid {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 10px;
-                padding: 15px;
-            }
-            
-            .game-container {
-                padding: 25px;
-            }
-            
-            .title {
-                font-size: 24px;
-            }
+        @media (max-width: 800px) {
+            .game-container { padding: 20px; }
+            .title { font-size: 24px; }
+            .report-container { grid-template-columns: 1fr; }
+            .card { font-size: 28px; grid-column: span 1; }
+             .game-grid { grid-template-columns: repeat(4, 1fr); }
         }
     </style>
 </head>
 <body>
     <div class="floating-particles" id="particles"></div>
+    <div id="tooltip" class="tooltip"></div>
     <div class="game-container">
         <div id="gameScreen">
             <div class="header">
-                <h1 class="title">✨ 数字配对记忆游戏 ✨</h1>
+                <h1 class="title">✨ 数字配对记忆挑战 ✨</h1>
             </div>
-
             <div class="game-info">
                 <div class="instruction">🎯 将0至9的数字配对</div>
-                <div class="timer" id="timer">0.000</div>
+                <div class="timer" id="timer" aria-live="polite">0.000</div>
             </div>
-
-            <div class="phase-indicator ready-phase" id="phaseIndicator">
-                🚀 准备开始游戏
-            </div>
-
+            <div class="phase-indicator ready-phase" id="phaseIndicator">🚀 准备开始游戏</div>
             <div class="game-grid" id="gameGrid"></div>
-
             <div class="controls">
                 <button class="btn" id="startBtn">🎮 开始游戏</button>
                 <button class="btn" id="resetBtn" style="display: none;">🔄 重新开始</button>
             </div>
         </div>
 
-        <div id="resultScreen" class="result-screen">
-            <h2 style="color: white; font-size: 28px; margin-bottom: 20px;">🎉 游戏完成！</h2>
-            <div class="stars" id="starsDisplay"></div>
-            <div class="score-display" id="scoreDisplay">0/100</div>
-            <div class="memory-score" id="memoryScore"></div>
-            <div class="history-link" id="showHistoryLink">📊 查看成绩单</div>
-            <div class="controls" style="margin-top: 25px;">
+        <div id="analysisReportScreen" class="analysis-report-screen">
+            <div class="report-header">
+                <h2 class="report-title">深度认知剖面报告</h2>
+                <div id="profileTitle" class="profile-title"></div>
+            </div>
+            <div class="report-container">
+                <div class="report-left">
+                    <div class="radar-chart-container">
+                        <svg id="cognitiveProfileChart" class="radar-chart"></svg>
+                    </div>
+                    <div id="statTiersContainer" class="stat-tiers-container"></div>
+                </div>
+                <div class="report-right">
+                    <div class="profile-analysis">
+                        <h3 class="analysis-section-title">📊 策略矩阵解读</h3>
+                        <div id="profileAnalysisText" class="analysis-text"></div>
+                    </div>
+                    <div class="dynamic-analysis">
+                        <h3 class="analysis-section-title">💡 动态表现洞察</h3>
+                        <div id="dynamicAnalysisContainer"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="history-link" id="showHistoryLink">📈 查看历史趋势</div>
+            <div class="controls">
                 <button class="btn" id="playAgainBtn">🔄 再玩一次</button>
             </div>
         </div>
 
         <div id="historyScreen" class="history-screen">
-            <h2 style="color: white; font-size: 28px; margin-bottom: 20px;">📈 历史成绩单</h2>
+            <h2 style="font-size: 28px; margin-bottom: 20px;">📈 历史趋势图</h2>
+            <div class="chart-container">
+                <svg id="historyChart" class="history-chart"></svg>
+                <div id="historyChartLegend" class="chart-legend"></div>
+            </div>
             <div class="history-list" id="historyList"></div>
             <div class="controls">
-                <button class="btn" id="backToGameBtn">↩️ 返回游戏</button>
+                <button class="btn" id="backToReportBtn">↩️ 返回报告</button>
                 <button class="btn" id="clearHistoryBtn">🗑️ 清空记录</button>
             </div>
         </div>
     </div>
 
     <script>
-        // DOM 元素缓存
-        const startBtn = document.getElementById('startBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const playAgainBtn = document.getElementById('playAgainBtn');
-        const showHistoryLink = document.getElementById('showHistoryLink');
-        const backToGameBtn = document.getElementById('backToGameBtn');
-        const clearHistoryBtn = document.getElementById('clearHistoryBtn');
-        const gameGrid = document.getElementById('gameGrid');
-        const timerEl = document.getElementById('timer');
-        const phaseIndicator = document.getElementById('phaseIndicator');
-
-        // 游戏状态管理
-        let gameState = {
-            phase: 'ready', // ready, play, finished
-            startTime: null,
-            timerInterval: null,
-            flippedCards: [],
-            matchedPairs: 0,
-            mistakes: 0, 
-            isChecking: false, 
-            totalPairs: 10,
+        // --- 全局配置 ---
+        const CONFIG = {
+            TOTAL_PAIRS: 10,
+            FLIP_BACK_DELAY: 800,
+            STORAGE_KEY: 'gameHistory_v3.1_pro',
+            PARTICLE_COUNT: 50,
+            MAX_HISTORY_ITEMS: 15,
         };
 
-        // 从本地存储加载历史记录
-        let gameHistory = JSON.parse(localStorage.getItem('gameHistory') || '[]');
+        const PERFORMANCE_TIERS = {
+            tiers: ['新手', '进阶', '熟练', '卓越', '大师'],
+            colors: ['--tier-color-1', '--tier-color-2', '--tier-color-3', '--tier-color-4', '--tier-color-5']
+        };
 
-        function createParticles() {
-            const particlesContainer = document.getElementById('particles');
-            if (particlesContainer.children.length > 0) return;
-            const particleCount = 50;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = `${Math.random() * 100}%`;
-                particle.style.top = `${Math.random() * 100}%`;
-                particle.style.animationDelay = `${Math.random() * 6}s`;
-                particle.style.animationDuration = `${Math.random() * 4 + 4}s`;
-                particlesContainer.appendChild(particle);
-            }
-        }
+        const game = {
+            // --- UI 元素映射 ---
+            ui: {
+                gameScreen: document.getElementById('gameScreen'),
+                analysisReportScreen: document.getElementById('analysisReportScreen'),
+                historyScreen: document.getElementById('historyScreen'),
+                startBtn: document.getElementById('startBtn'),
+                resetBtn: document.getElementById('resetBtn'),
+                playAgainBtn: document.getElementById('playAgainBtn'),
+                showHistoryLink: document.getElementById('showHistoryLink'),
+                backToReportBtn: document.getElementById('backToReportBtn'),
+                clearHistoryBtn: document.getElementById('clearHistoryBtn'),
+                gameGrid: document.getElementById('gameGrid'),
+                timerEl: document.getElementById('timer'),
+                phaseIndicator: document.getElementById('phaseIndicator'),
+                particles: document.getElementById('particles'),
+                tooltip: document.getElementById('tooltip'),
+                // 报告UI
+                profileTitle: document.getElementById('profileTitle'),
+                cognitiveProfileChart: document.getElementById('cognitiveProfileChart'),
+                statTiersContainer: document.getElementById('statTiersContainer'),
+                profileAnalysisText: document.getElementById('profileAnalysisText'),
+                dynamicAnalysisContainer: document.getElementById('dynamicAnalysisContainer'),
+                // 历史UI
+                historyChart: document.getElementById('historyChart'),
+                historyChartLegend: document.getElementById('historyChartLegend'),
+                historyList: document.getElementById('historyList'),
+            },
 
-        function generateCardNumbers() {
-            const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-            let cards = [...numbers, ...numbers];
-            for (let i = cards.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [cards[i], cards[j]] = [cards[j], cards[i]];
-            }
-            return cards;
-        }
+            // --- 游戏状态 ---
+            state: {},
 
-        function createGameGrid() {
-            gameGrid.innerHTML = '';
-            const cardNumbers = generateCardNumbers();
-            
-            cardNumbers.forEach((number, index) => {
-                const card = document.createElement('div');
-                card.className = 'card';
-                card.dataset.index = index;
-                card.dataset.number = number;
-                card.innerHTML = `
-                    <div class="card-inner">
-                        <div class="card-face card-front"></div>
-                        <div class="card-face card-back">${number}</div>
-                    </div>
-                `;
-                card.addEventListener('click', () => handleCardClick(card));
-                gameGrid.appendChild(card);
-            });
-        }
-        
-        function startGame() {
-            startBtn.disabled = true;
-            resetGameState(); 
-
-            gameState.phase = 'play';
-            gameState.startTime = Date.now();
-            
-            createGameGrid();
-            updatePhaseIndicator('🎮 配对阶段 - 找出所有相同数字！', 'play-phase');
-            
-            startBtn.style.display = 'none';
-            resetBtn.style.display = 'inline-block';
-            resetBtn.disabled = false;
-            
-            startTimer();
-        }
-
-        function handleCardClick(card) {
-            if (gameState.phase !== 'play' || gameState.isChecking || card.classList.contains('flipped') || card.classList.contains('matched')) {
-                return;
-            }
-            
-            card.classList.add('flipped');
-            gameState.flippedCards.push(card);
-            
-            if (gameState.flippedCards.length === 2) {
-                gameState.isChecking = true;
-                checkMatch();
-            }
-        }
-
-        function checkMatch() {
-            const [card1, card2] = gameState.flippedCards;
-            
-            setTimeout(() => {
-                if (card1.dataset.number === card2.dataset.number) {
-                    card1.classList.add('matched');
-                    card2.classList.add('matched');
-                    gameState.matchedPairs++;
-                    
-                    if (gameState.matchedPairs === gameState.totalPairs) {
-                        finishGame();
-                    }
-                } else {
-                    card1.classList.remove('flipped');
-                    card2.classList.remove('flipped');
-                    gameState.mistakes++; 
+            // --- 历史记录 ---
+            history: (() => {
+                try {
+                    return JSON.parse(localStorage.getItem(CONFIG.STORAGE_KEY) || '[]');
+                } catch (e) {
+                    console.error("无法解析历史记录:", e);
+                    return [];
                 }
+            })(),
+
+            // --- 核心方法 ---
+            methods: {
+                init() {
+                    this.createParticles();
+                    this.attachEventListeners();
+                    this.resetGame();
+                },
+
+                // --- 游戏流程控制 ---
+                resetGameState() {
+                    cancelAnimationFrame(game.state.animationFrameId);
+                    game.state = {
+                        phase: 'ready',
+                        startTime: null,
+                        animationFrameId: null,
+                        flippedCards: [],
+                        matchedPairs: 0,
+                        isChecking: false,
+                        totalPairs: CONFIG.TOTAL_PAIRS,
+                        turnHistory: [],
+                        turnStartTime: null,
+                    };
+                },
+
+                startGame() {
+                    game.ui.startBtn.disabled = true;
+                    this.resetGameState();
+                    game.state.phase = 'play';
+                    game.state.startTime = Date.now();
+                    this.createGameGrid();
+                    this.updatePhaseIndicator('🎮 配对阶段 - 找出所有相同数字！', 'play-phase');
+                    game.ui.startBtn.style.display = 'none';
+                    game.ui.resetBtn.style.display = 'inline-block';
+                    game.ui.resetBtn.disabled = false;
+                    this.startTimer();
+                },
                 
-                gameState.flippedCards = [];
-                gameState.isChecking = false;
-            }, 800);
-        }
+                finishGame() {
+                    game.state.phase = 'finished';
+                    const totalTime = (Date.now() - game.state.startTime) / 1000;
+                    const analysisData = this.analyzePerformance(game.state.turnHistory);
 
-        function finishGame() {
-            gameState.phase = 'finished';
-            clearInterval(gameState.timerInterval);
-            
-            const totalTime = (Date.now() - gameState.startTime) / 1000;
-            const totalMistakes = gameState.mistakes;
-            const score = calculateScore(totalTime, totalMistakes); 
-            const stars = getStarRating(score);
-            
-            const gameResult = {
-                date: new Date().toLocaleString('zh-CN'),
-                score: score,
-                time: totalTime.toFixed(3),
-                stars: stars,
-                mistakes: totalMistakes 
-            };
-            
-            gameHistory.unshift(gameResult);
-            if (gameHistory.length > 10) gameHistory.pop();
-            localStorage.setItem('gameHistory', JSON.stringify(gameHistory));
-            
-            showResult(score, totalTime, stars, totalMistakes);
-        }
+                    const result = {
+                        date: new Date().toLocaleString('zh-CN', { dateStyle: 'short', timeStyle: 'short' }),
+                        time: totalTime.toFixed(3),
+                        profileName: analysisData.profile.name,
+                        analysisData,
+                    };
+                    
+                    game.history.unshift(result);
+                    if (game.history.length > CONFIG.MAX_HISTORY_ITEMS) game.history.pop();
+                    localStorage.setItem(CONFIG.STORAGE_KEY, JSON.stringify(game.history));
+                    
+                    this.renderAnalysisReport(result);
+                },
 
-        // **修改**：新的评分函数，更宽松
-        function calculateScore(time, mistakes) {
-            const baseScore = 100;
-            const timePenalty = time * 0.2; // 降低时间惩罚
-            const mistakesPenalty = mistakes * 3; // 降低错误惩罚
-            const finalScore = baseScore - timePenalty - mistakesPenalty;
-            
-            return Math.max(10, Math.round(finalScore)); // 最低10分
-        }
+                resetGame() {
+                    this.resetGameState();
+                    this.switchScreen('gameScreen');
+                    game.ui.startBtn.style.display = 'inline-block';
+                    game.ui.startBtn.disabled = false;
+                    game.ui.resetBtn.style.display = 'none';
+                    game.ui.gameGrid.innerHTML = '';
+                    game.ui.timerEl.textContent = '0.000';
+                    this.updatePhaseIndicator('🚀 准备开始游戏', 'ready-phase');
+                },
+                
+                // --- 游戏交互逻辑 ---
+                createGameGrid() {
+                    game.ui.gameGrid.innerHTML = '';
+                    const fragment = document.createDocumentFragment();
+                    const cardNumbers = Array.from({ length: CONFIG.TOTAL_PAIRS }, (_, i) => i);
+                    const shuffledCards = [...cardNumbers, ...cardNumbers].sort(() => Math.random() - 0.5);
+                    
+                    shuffledCards.forEach(number => {
+                        const card = document.createElement('div');
+                        card.className = 'card';
+                        card.dataset.number = number;
+                        card.setAttribute('role', 'button');
+                        card.setAttribute('tabindex', '0');
+                        card.setAttribute('aria-label', '未翻开的卡牌');
+                        card.innerHTML = `<div class="card-inner"><div class="card-face card-front"></div><div class="card-face card-back">${number}</div></div>`;
+                        card.addEventListener('click', () => this.handleCardClick(card));
+                        card.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') this.handleCardClick(card);
+                        });
+                        fragment.appendChild(card);
+                    });
+                    game.ui.gameGrid.appendChild(fragment);
+                },
 
-        // **修改**：新的星级评定，更容易获得星星
-        function getStarRating(score) {
-            if (score >= 70) return 3; // 70分以上3星
-            if (score >= 50) return 2; // 50分以上2星
-            if (score >= 30) return 1; // 30分以上1星
-            return 0;
-        }
+                handleCardClick(card) {
+                    const { phase, isChecking, flippedCards } = game.state;
+                    if (phase !== 'play' || isChecking || card.classList.contains('flipped')) return;
+                    
+                    if (flippedCards.length === 0) game.state.turnStartTime = Date.now();
 
-        function showResult(score, time, stars, mistakes) {
-            document.getElementById('gameScreen').style.display = 'none';
-            document.getElementById('resultScreen').style.display = 'block';
-            
-            const starsEl = document.getElementById('starsDisplay');
-            starsEl.innerHTML = '';
-            for (let i = 0; i < 3; i++) {
-                const star = document.createElement('span');
-                star.className = i < stars ? 'star filled' : 'star';
-                star.textContent = '★';
-                starsEl.appendChild(star);
+                    card.classList.add('flipped');
+                    card.setAttribute('aria-label', `卡牌 ${card.dataset.number}`);
+                    flippedCards.push(card);
+                    
+                    if (flippedCards.length === 2) {
+                        game.state.isChecking = true;
+                        this.checkMatch();
+                    }
+                },
+
+                checkMatch() {
+                    const [card1, card2] = game.state.flippedCards;
+                    const isMatch = card1.dataset.number === card2.dataset.number;
+                    const turnDuration = (Date.now() - game.state.turnStartTime) / 1000;
+
+                    game.state.turnHistory.push({ isMatch, duration: turnDuration });
+
+                    setTimeout(() => {
+                        if (isMatch) {
+                            card1.classList.add('matched');
+                            card2.classList.add('matched');
+                            card1.setAttribute('aria-label', `已匹配的卡牌 ${card1.dataset.number}`);
+                            card2.setAttribute('aria-label', `已匹配的卡牌 ${card2.dataset.number}`);
+                            game.state.matchedPairs++;
+                            if (game.state.matchedPairs === game.state.totalPairs) this.finishGame();
+                        } else {
+                            card1.classList.add('shake');
+                            card2.classList.add('shake');
+                            setTimeout(() => {
+                                card1.classList.remove('flipped', 'shake');
+                                card2.classList.remove('flipped', 'shake');
+                                card1.setAttribute('aria-label', '未翻开的卡牌');
+                                card2.setAttribute('aria-label', '未翻开的卡牌');
+                            }, 500);
+                        }
+                        game.state.flippedCards = [];
+                        game.state.isChecking = false;
+                    }, CONFIG.FLIP_BACK_DELAY);
+                },
+
+                // --- 深度分析模块 ---
+                analyzePerformance(turnHistory) {
+                    const metrics = this.calculatePrimaryMetrics(turnHistory);
+                    const profile = this.determineCognitiveProfile(metrics);
+                    const dynamics = this.analyzeInGameDynamics(turnHistory);
+                    return { ...metrics, ...profile, ...dynamics };
+                },
+
+                calculatePrimaryMetrics(turnHistory) {
+                    const totalTurns = turnHistory.length;
+                    if (totalTurns === 0) return { score: 0, memoryEfficiency: 0, speedScore: 0, consistencyScore: 0, mistakes: 0, turnDurations: [] };
+                    const mistakes = turnHistory.filter(t => !t.isMatch).length;
+                    const turnDurations = turnHistory.map(t => t.duration);
+                    const avgReactionTime = turnDurations.reduce((a, b) => a + b, 0) / totalTurns;
+                    const stdDev = Math.sqrt(turnDurations.map(x => Math.pow(x - avgReactionTime, 2)).reduce((a, b) => a + b, 0) / totalTurns);
+                    const memoryEfficiency = (CONFIG.TOTAL_PAIRS / totalTurns) * 100;
+                    const speedScore = Math.max(0, Math.min(100, 100 - (avgReactionTime - 0.5) * 40));
+                    const consistencyScore = Math.max(0, Math.min(100, 100 - stdDev * 100));
+                    const score = Math.round((memoryEfficiency * 0.5) + (speedScore * 0.25) + (consistencyScore * 0.25));
+                    return { score, memoryEfficiency, speedScore, consistencyScore, mistakes, turnDurations };
+                },
+
+                determineCognitiveProfile(metrics) {
+                    const { memoryEfficiency, speedScore } = metrics;
+                    let profile;
+                    if (speedScore >= 60) {
+                        if (memoryEfficiency >= 60) {
+                            profile = { name: '敏锐战略家', text: '您能以极快的速度精准决策，展现出卓越的工作记忆和高效的认知处理能力。您是天生的快速问题解决者。' };
+                        } else {
+                            profile = { name: '直觉探索者', text: '您的反应速度极快，倾向于通过快速尝试来寻找答案。这种风格在探索未知时非常有效，但注意控制失误率能让您更上一层楼。' };
+                        }
+                    } else {
+                        if (memoryEfficiency >= 60) {
+                            profile = { name: '缜密计划者', text: '您行动前深思熟虑，每一步都力求精准。这种沉稳、零失误的风格体现了强大的规划能力和记忆准确性，是可靠性的典范。' };
+                        } else {
+                            profile = { name: '沉稳学习者', text: '您在谨慎地探索和学习规则。虽然速度和效率有待提升，但这种稳健的步伐是构建强大认知能力的基础。多加练习，您将很快进步！' };
+                        }
+                    }
+                    return { profile };
+                },
+                
+                analyzeInGameDynamics(turnHistory) {
+                    if (turnHistory.length < CONFIG.TOTAL_PAIRS) return { trend: {text:'数据不足'}, errorPattern: {text:'数据不足'} };
+                    const turns = turnHistory.length;
+                    const firstHalfTurns = turnHistory.slice(0, Math.floor(turns / 2));
+                    const secondHalfTurns = turnHistory.slice(Math.floor(turns / 2));
+                    const firstHalfAvgTime = firstHalfTurns.length ? firstHalfTurns.reduce((sum, t) => sum + t.duration, 0) / firstHalfTurns.length : 0;
+                    const secondHalfAvgTime = secondHalfTurns.length ? secondHalfTurns.reduce((sum, t) => sum + t.duration, 0) / secondHalfTurns.length : 0;
+                    let trend;
+                    if (secondHalfAvgTime < firstHalfAvgTime * 0.9) {
+                        trend = { text: '您表现出显著的<strong style="color: var(--tier-color-4)">学习效应</strong>，越玩越快，表明您能迅速适应挑战并优化策略。' };
+                    } else if (firstHalfAvgTime < secondHalfAvgTime * 0.9) {
+                        trend = { text: '您的后期反应时间有所增加，可能表明在游戏后期出现了<strong style="color: var(--tier-color-2)">认知疲劳</strong>。保持专注是关键。' };
+                    } else {
+                        trend = { text: '您在整场游戏中都保持了<strong style="color: var(--tier-color-3)">稳定的表现节奏</strong>，展现了出色的专注力耐力。' };
+                    }
+                    const mistakes = turnHistory.map((t, i) => ({...t, index: i})).filter(t => !t.isMatch);
+                    let errorPattern;
+                    if (mistakes.length > 1) {
+                        const avgErrorIndex = mistakes.reduce((sum, t) => sum + t.index, 0) / mistakes.length;
+                        if (avgErrorIndex < turns / 3) {
+                            errorPattern = { text: '失误主要集中在<strong style="color: var(--tier-color-2)">游戏前期</strong>，这很正常，是熟悉布局的探索阶段。' };
+                        } else if (avgErrorIndex > turns * 2 / 3) {
+                            errorPattern = { text: '失误多发生在<strong style="color: var(--tier-color-4)">游戏后期</strong>，可能是记忆负荷过大导致。分块记忆或能改善。' };
+                        } else {
+                            errorPattern = { text: '失误<strong style="color: var(--tier-color-3)">均匀分布</strong>，表明没有特定的薄弱阶段，整体表现均衡。' };
+                        }
+                    } else {
+                        errorPattern = { text: `您的失误仅有 ${mistakes.length} 次，表现出<strong style="color: var(--tier-color-5)">高度的准确性</strong>。` };
+                    }
+                    return { trend, errorPattern };
+                },
+
+                getPerformanceTier(score) {
+                    const tierIndex = Math.min(Math.floor(score / 20), 4);
+                    return {
+                        name: PERFORMANCE_TIERS.tiers[tierIndex],
+                        color: `var(${PERFORMANCE_TIERS.colors[tierIndex]})`
+                    };
+                },
+
+                // --- 报告与图表渲染 ---
+                renderAnalysisReport(result) {
+                    this.switchScreen('analysisReportScreen');
+                    const { analysisData } = result;
+                    game.ui.profileTitle.textContent = `您的策略象限：${analysisData.profile.name}`;
+                    const radarData = { "记忆效率": analysisData.memoryEfficiency, "决策速度": analysisData.speedScore, "表现一致性": analysisData.consistencyScore };
+                    this.createRadarChart(game.ui.cognitiveProfileChart, radarData);
+                    const tiersContainer = game.ui.statTiersContainer;
+                    tiersContainer.innerHTML = '';
+                    const metricsToDisplay = { '综合得分': analysisData.score, '记忆效率': analysisData.memoryEfficiency, '决策速度': analysisData.speedScore, '表现一致性': analysisData.consistencyScore };
+                    for (const label in metricsToDisplay) {
+                        const score = metricsToDisplay[label];
+                        const tier = this.getPerformanceTier(score);
+                        tiersContainer.innerHTML += `<div class="stat-tier-item"><span class="stat-tier-label">${label}</span><span class="stat-tier-value" style="background-color: ${tier.color}">${tier.name} (${Math.round(score)})</span></div>`;
+                    }
+                    game.ui.profileAnalysisText.innerHTML = analysisData.profile.text;
+                    game.ui.dynamicAnalysisContainer.innerHTML = `<div class="dynamic-insight"><div class="sparkline-container" id="sparklineContainer"></div><div class="analysis-text">${analysisData.trend.text}</div></div><div class="dynamic-insight" style="align-items: center;"><div class="analysis-text" style="width: 100%">${analysisData.errorPattern.text}</div></div>`;
+                    this.createSparkline(document.getElementById('sparklineContainer'), analysisData.turnDurations);
+                },
+                
+                createRadarChart(svg, data) {
+                    svg.innerHTML = ''; const size = svg.clientWidth; const center = size / 2; const radius = size * 0.38; const labels = Object.keys(data); const numAxes = labels.length;
+                    for (let i = 1; i <= 4; i++) { const r = radius * (i / 4); const points = labels.map((_, j) => { const angle = (j / numAxes) * 2 * Math.PI - Math.PI / 2; return `${center + r * Math.cos(angle)},${center + r * Math.sin(angle)}`; }).join(' '); svg.appendChild(this.createSVGElement('polygon', { points, class: 'radar-grid' })); }
+                    labels.forEach((label, i) => { const angle = (i / numAxes) * 2 * Math.PI - Math.PI / 2; svg.appendChild(this.createSVGElement('line', { x1: center, y1: center, x2: center + radius * Math.cos(angle), y2: center + radius * Math.sin(angle), class: 'radar-axis' })); const text = this.createSVGElement('text', { x: center + (radius + 20) * Math.cos(angle), y: center + (radius + 20) * Math.sin(angle), class: 'radar-labels' }); text.textContent = label; svg.appendChild(text); });
+                    const dataPoints = labels.map((label, i) => { const value = (data[label] || 0) / 100; const angle = (i / numAxes) * 2 * Math.PI - Math.PI / 2; const p = { x: center + radius * value * Math.cos(angle), y: center + radius * value * Math.sin(angle) }; svg.appendChild(this.createSVGElement('circle', { cx: p.x, cy: p.y, r: 4, class: 'radar-point' })); return `${p.x},${p.y}`; }).join(' ');
+                    const area = this.createSVGElement('polygon', { points: dataPoints, class: 'radar-area' }); area.innerHTML = `<animate attributeName="points" from="${new Array(numAxes).fill(`${center},${center}`).join(' ')}" to="${dataPoints}" dur="0.7s" fill="freeze" calcMode="spline" keySplines="0.25 0.1 0.25 1" />`; svg.appendChild(area);
+                },
+
+                createSparkline(container, data) {
+                    if (!data || data.length < 2) { container.innerHTML = `<span style="font-size:10px; color: #aaa;">数据不足</span>`; return; }
+                    const svg = this.createSVGElement('svg', { class: 'sparkline-svg', viewBox: `0 0 120 40` }); const maxVal = Math.max(...data); const minVal = Math.min(...data); const range = maxVal - minVal === 0 ? 1 : maxVal - minVal;
+                    const points = data.map((d, i) => { const x = (i / (data.length - 1)) * 120; const y = 38 - ((d - minVal) / range) * 36; return `${x},${y}`; }).join(' ');
+                    const fillPoints = `0,40 ${points} 120,40`;
+                    svg.innerHTML = `<polygon class="sparkline-fill" points="${fillPoints}" /><polyline class="sparkline-line" points="${points}" />`;
+                    container.innerHTML = ''; container.appendChild(svg);
+                },
+
+                renderHistoryChart(history) {
+                    const svg = game.ui.historyChart; svg.innerHTML = ''; const legend = game.ui.historyChartLegend; legend.innerHTML = ''; if (history.length < 2) { svg.innerHTML = `<text x="50%" y="50%" fill="white" text-anchor="middle">完成至少两次挑战以生成趋势图...</text>`; return; }
+                    const data = history.slice(0, CONFIG.MAX_HISTORY_ITEMS).reverse(); const colors = { score: '#4ecdc4', mei: '#e67e22', speed: '#9b59b6' }; const dataMap = { score: 'score', mei: 'memoryEfficiency', speed: 'speedScore' }; const labels = { score: '综合得分', mei: '记忆效率', speed: '决策速度' };
+                    const { width, height } = svg.getBoundingClientRect(); const padding = { top: 20, right: 20, bottom: 30, left: 30 }; const xScale = (i) => padding.left + (width - padding.left - padding.right) * (i / (data.length - 1)); const yScale = (val) => height - padding.bottom - (height - padding.top - padding.bottom) * (val / 100);
+                    const yAxis = this.createSVGElement('g'); [0, 25, 50, 75, 100].forEach(val => { const y = yScale(val); yAxis.appendChild(this.createSVGElement('line', { x1: padding.left, y1: y, x2: width - padding.right, y2: y, class: 'chart-grid-line' })); const text = this.createSVGElement('text', { x: padding.left - 5, y: y + 4, class: 'chart-axis-text', 'text-anchor': 'end'}); text.textContent = val; yAxis.appendChild(text); }); svg.appendChild(yAxis);
+                    Object.keys(labels).forEach(key => { const dataKey = dataMap[key]; const linePath = data.map((d, i) => `${i === 0 ? 'M' : 'L'} ${xScale(i)} ${yScale(d.analysisData[dataKey])}`).join(' '); const line = this.createSVGElement('path', { d: linePath, class: `chart-line`, style: `stroke: ${colors[key]}` }); svg.appendChild(line); data.forEach((d, i) => { const point = this.createSVGElement('circle', { cx: xScale(i), cy: yScale(d.analysisData[dataKey]), class: `chart-point`, style: `fill: ${colors[key]}` }); point.innerHTML = `<title>第${game.history.length - data.length + i + 1}次 - ${labels[key]}: ${Math.round(d.analysisData[dataKey])}</title>`; svg.appendChild(point); }); const item = document.createElement('div'); item.className = 'legend-item'; item.innerHTML = `<div class="legend-color" style="background-color: ${colors[key]}"></div><span>${labels[key]}</span>`; legend.appendChild(item); });
+                },
+
+                // --- 页面导航与历史 ---
+                showHistory() {
+                    this.switchScreen('historyScreen');
+                    game.ui.historyList.innerHTML = game.history.length === 0 
+                        ? '<div style="text-align: center; color: rgba(255,255,255,0.7);">🔍 暂无历史记录</div>'
+                        : game.history.map(r => `
+                            <div class="history-item">
+                                <div><div style="font-weight: 700;">${r.date}</div><div style="font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 5px;">用时: ${r.time}s | ${r.profileName}</div></div>
+                                <div style="font-weight: 900; font-size: 18px;">${r.analysisData.score}/100</div>
+                            </div>`).join('');
+                    this.renderHistoryChart(game.history);
+                },
+
+                backToReport() {
+                    this.switchScreen('analysisReportScreen');
+                },
+
+                clearHistory() {
+                    if (confirm('确定要清空所有历史记录吗？')) {
+                        game.history = [];
+                        localStorage.removeItem(CONFIG.STORAGE_KEY);
+                        this.showHistory();
+                    }
+                },
+                
+                // --- 通用工具方法 ---
+                createParticles() {
+                    if (game.ui.particles.children.length > 0) return;
+                    const fragment = document.createDocumentFragment();
+                    for (let i = 0; i < CONFIG.PARTICLE_COUNT; i++) {
+                        const p = document.createElement('div'); p.className = 'particle'; p.style.left = `${Math.random() * 100}%`; p.style.top = `${Math.random() * 100}%`; p.style.animationDelay = `${Math.random() * 8}s`; p.style.animationDuration = `${Math.random() * 5 + 5}s`; fragment.appendChild(p);
+                    }
+                    game.ui.particles.appendChild(fragment);
+                },
+                
+                switchScreen(screenId) {
+                    ['gameScreen', 'analysisReportScreen', 'historyScreen'].forEach(id => {
+                        game.ui[id].style.display = (id === screenId) ? 'block' : 'none';
+                    });
+                },
+
+                updatePhaseIndicator(text, phaseClass) {
+                    game.ui.phaseIndicator.textContent = text;
+                    game.ui.phaseIndicator.className = 'phase-indicator';
+                    if (phaseClass) game.ui.phaseIndicator.classList.add(phaseClass);
+                },
+
+                startTimer() {
+                    const update = () => {
+                        if (game.state.phase !== 'play') return;
+                        const elapsedTime = (Date.now() - game.state.startTime) / 1000;
+                        game.ui.timerEl.textContent = elapsedTime.toFixed(3);
+                        game.state.animationFrameId = requestAnimationFrame(update);
+                    };
+                    game.state.animationFrameId = requestAnimationFrame(update);
+                },
+
+                createSVGElement: (tag, attrs) => {
+                    const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+                    for (const key in attrs) el.setAttribute(key, attrs[key]);
+                    return el;
+                },
+
+                attachEventListeners() {
+                    game.ui.startBtn.addEventListener('click', () => this.startGame());
+                    game.ui.resetBtn.addEventListener('click', () => this.resetGame());
+                    game.ui.playAgainBtn.addEventListener('click', () => this.resetGame());
+                    game.ui.showHistoryLink.addEventListener('click', () => this.showHistory());
+                    game.ui.backToReportBtn.addEventListener('click', () => this.backToReport());
+                    game.ui.clearHistoryBtn.addEventListener('click', () => this.clearHistory());
+                    document.addEventListener('mouseover', e => { if (e.target.matches('.info-icon')) { const tooltip = game.ui.tooltip; tooltip.textContent = e.target.dataset.tooltip; tooltip.classList.add('active'); const rect = e.target.getBoundingClientRect(); tooltip.style.left = `${rect.left + rect.width / 2 - tooltip.offsetWidth / 2}px`; tooltip.style.top = `${rect.top - tooltip.offsetHeight - 8}px`; } });
+                    document.addEventListener('mouseout', e => { if (e.target.matches('.info-icon')) { game.ui.tooltip.classList.remove('active'); } });
+                }
             }
-            
-            document.getElementById('scoreDisplay').textContent = `${score}/100`;
-            document.getElementById('memoryScore').innerHTML = `⏱️ 用时: ${time.toFixed(3)}s | ❌ 试错: ${mistakes}次`;
-        }
-        
-        function showHistory() {
-            document.getElementById('resultScreen').style.display = 'none';
-            document.getElementById('historyScreen').style.display = 'block';
-            
-            const historyList = document.getElementById('historyList');
-            historyList.innerHTML = '';
-            
-            if (gameHistory.length === 0) {
-                historyList.innerHTML = '<div style="text-align: center; color: rgba(255,255,255,0.7);">🔍 暂无历史记录</div>';
-                return;
-            }
-            
-            gameHistory.forEach(record => {
-                const item = document.createElement('div');
-                item.className = 'history-item';
-                item.innerHTML = `
-                    <div style="color: white;">
-                        <div style="font-weight: 700;">${record.date}</div>
-                        <div style="font-size: 14px; color: rgba(255,255,255,0.7); margin-top: 5px;">
-                            用时: ${record.time}s | 试错: ${record.mistakes || 0}次
-                        </div>
-                    </div>
-                    <div style="text-align: right; color: white;">
-                        <div style="font-weight: 900; font-size: 18px;">${record.score}/100</div>
-                        <div style="font-size: 16px;">${'★'.repeat(record.stars)}${'☆'.repeat(3 - record.stars)}</div>
-                    </div>
-                `;
-                historyList.appendChild(item);
-            });
-        }
+        };
 
-        function backToGame() {
-            document.getElementById('historyScreen').style.display = 'none';
-            if (gameState.phase === 'finished') {
-                document.getElementById('resultScreen').style.display = 'block';
-            } else {
-                document.getElementById('gameScreen').style.display = 'block';
-            }
-        }
-
-        function clearHistory() {
-            if (confirm('确定要清空所有历史记录吗？')) {
-                gameHistory = [];
-                localStorage.removeItem('gameHistory');
-                showHistory();
-            }
-        }
-        
-        function resetGameState() {
-            clearInterval(gameState.timerInterval);
-            gameState.phase = 'ready';
-            gameState.startTime = null;
-            gameState.timerInterval = null;
-            gameState.flippedCards = [];
-            gameState.matchedPairs = 0;
-            gameState.mistakes = 0;
-            gameState.isChecking = false;
-        }
-
-        function resetGame() {
-            resetGameState();
-            
-            document.getElementById('gameScreen').style.display = 'block';
-            document.getElementById('resultScreen').style.display = 'none';
-            document.getElementById('historyScreen').style.display = 'none';
-            
-            startBtn.style.display = 'inline-block';
-            startBtn.disabled = false;
-            resetBtn.style.display = 'none';
-            
-            gameGrid.innerHTML = '';
-            timerEl.textContent = '0.000';
-            updatePhaseIndicator('🚀 准备开始游戏', 'ready-phase');
-        }
-
-        function updatePhaseIndicator(text, phaseClass) {
-            phaseIndicator.textContent = text;
-            phaseIndicator.className = 'phase-indicator';
-            if (phaseClass) {
-                phaseIndicator.classList.add(phaseClass);
-            }
-        }
-
-        function startTimer() {
-            gameState.timerInterval = setInterval(() => {
-                const elapsedTime = (Date.now() - gameState.startTime) / 1000;
-                timerEl.textContent = elapsedTime.toFixed(3);
-            }, 10);
-        }
-
-        function initializeEventListeners() {
-            startBtn.addEventListener('click', startGame);
-            resetBtn.addEventListener('click', resetGame);
-            playAgainBtn.addEventListener('click', resetGame);
-            showHistoryLink.addEventListener('click', showHistory);
-            backToGameBtn.addEventListener('click', backToGame);
-            clearHistoryBtn.addEventListener('click', clearHistory);
-        }
-
-        function init() {
-            createParticles();
-            initializeEventListeners();
-            resetGame();
-        }
-
-        init();
+        // --- 启动游戏 ---
+        game.methods.init();
     </script>
 </body>
 </html>
